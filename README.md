@@ -5,7 +5,7 @@ A Github Action to set up everything needed to run [`seqerakit`](https://github.
 
 ```yml
   - name: Compare coverage
-    uses: alvaromartmart/setup-seqerakit@v1
+    uses: seqera/setup-seqerakit@v1
     with:
       api-endpoint: "https://tower.nf/api"
       token: ${{ secrets.SEQERA_PLATFORM_PERSONAL_ACCESS_TOKEN }}
