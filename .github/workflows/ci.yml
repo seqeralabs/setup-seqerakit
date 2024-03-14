@@ -1,0 +1,16 @@
+on:
+  push:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    name: CI
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run action
+        uses: ./
+        with:
+          token: ${{ secrets.TOWER_PAT }}
+        

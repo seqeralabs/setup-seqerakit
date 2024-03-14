@@ -1,0 +1,54 @@
+name: 'Setup seqerakit'
+description: 'Install and configure seqerakit'
+inputs:
+  token:
+    description: Personal Access Token to authenticate with Seqera Platform
+    required: true
+  api-endpoint:
+    description: Seqera Platform API endpoint
+    required: true
+    default: "https://tower.nf/api"
+runs:
+  using: "composite"
+  steps:
+    - name: Install seqerakit
+      run: |
+        pip install seqerakit
+      shell: bash
+
+    - name: Check local availability of seqera platform cli
+      id: check-tw
+      run: |
+        if tw --version &> /dev/null; then
+          echo "tw-installed=true" >> $GITHUB_OUTPUT
+        else
+          echo "tw-installed=false" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+  
+
+    - name: Setup token
+      run: |
+        echo "TOWER_ACCESS_TOKEN=${{ inputs.token }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Setup API endpoint
+      run: |
+        echo "TOWER_API_ENDPOINT=${{ inputs.api-endpoint }}" >> $GITHUB_ENV
+      shell: bash
+
+    # Install tw if needed
+    - name: Install tw
+      if: steps.check-tw.outputs.tw-installed == 'false'
+      run: |
+        curl -sL https://github.com/seqeralabs/tower-cli/releases/latest/download/tw-linux-x86_64 -o tw
+        chmod +x tw
+        sudo mv tw /usr/local/bin/
+        tw info || exit 0
+      shell: bash
+
+    - name: Validate
+      run: |
+        seqerakit --info
+      shell: bash
+
